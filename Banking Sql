@@ -1,0 +1,82 @@
+create database bank2;
+use bank2;
+
+create table Branch1(
+branch_id INT PRIMARY KEY,
+branch_name varchar(20) ,
+branch_city varchar(20),
+address varchar(20)
+);
+
+CREATE TABLE customers (
+    customer_id  INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name  VARCHAR(50) NOT NULL,
+    email  VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    date_of_birth DATE,
+    address VARCHAR(255)
+);
+
+CREATE TABLE accounts (
+    account_id  INT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    branch_id  INT NOT NULL,
+    account_number VARCHAR(20) UNIQUE NOT NULL,
+    account_type  VARCHAR(20) CHECK (account_type IN ('SAVINGS', 'CURRENT', 'FIXED')),
+    balance DECIMAL(15,2) DEFAULT 0.00,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (branch_id) REFERENCES Branch1(branch_id)
+);
+
+CREATE TABLE transactions (
+    transaction_id INT PRIMARY KEY,
+    account_id  INT NOT NULL,
+    transaction_type VARCHAR(20) CHECK (transaction_type IN ('DEPOSIT', 'WITHDRAWAL', 'TRANSFER')),
+    amount DECIMAL(15,2) NOT NULL,
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (account_id) REFERENCES accounts(account_id)
+);
+
+INSERT INTO Branch1 (branch_id, branch_name, branch_city, address)
+VALUES
+(1, 'Main Branch', 'New York', '5th Avenue'),
+(2, 'City Branch', 'Chicago', 'Lake Street'),
+(3, 'West Branch', 'Los Angeles', 'Sunset Blvd');
+
+INSERT INTO customers (customer_id, first_name, last_name, email, phone, date_of_birth, address)
+VALUES
+(101, 'John', 'Doe', 'john.doe@gmail.com', '9876543210', '1990-05-15', 'New York'),
+(102, 'Jane', 'Smith', 'jane.smith@gmail.com', '9123456780', '1988-09-20', 'Chicago'),
+(103, 'Robert', 'Brown', 'robert.brown@gmail.com', '9988776655', '1995-12-10', 'Los Angeles');
+
+INSERT INTO accounts (account_id, customer_id, branch_id, account_number, account_type, balance)
+VALUES
+(1001, 101, 1, 'ACC1001', 'SAVINGS', 5000.00),
+(1002, 102, 2, 'ACC1002', 'CURRENT', 12000.00),
+(1003, 103, 3, 'ACC1003', 'FIXED', 25000.00);
+
+INSERT INTO transactions (transaction_id, account_id, transaction_type, amount)
+VALUES
+(5001, 1001, 'DEPOSIT', 2000.00),
+(5002, 1001, 'WITHDRAWAL', 500.00),
+(5003, 1002, 'DEPOSIT', 3000.00),
+(5004, 1003, 'TRANSFER', 10000.00);
+ 
+select * from transactions;
+
+SELECT *
+FROM customers
+WHERE address = 'Chicago';
+
+SELECT *
+FROM accounts
+WHERE balance > 10000;
+
+SELECT c.customer_id, c.first_name, c.last_name,
+       a.account_number, a.account_type, a.balance
+FROM customers c
+JOIN accounts a ON c.customer_id = a.customer_id;
+
+select sum(balance)  as total_bank_balance
+from accounts
