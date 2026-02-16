@@ -1,0 +1,288 @@
+Microsoft Windows [Version 10.0.22631.6199]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\student>mongosh
+Current Mongosh Log ID: 6992c5d3140206cd881e2620
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.5.10
+Using MongoDB:          8.0.10
+Using Mongosh:          2.5.10
+mongosh 2.6.0 is available for download: https://www.mongodb.com/try/download/shell
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2026-02-16T06:58:44.328+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> use students
+switched to db students
+students> db
+students
+students> db.students.insertMany([
+...   { rollNo: 101, name: "Amit", dept: "CSE", marks: 85, city: "Delhi" },
+...   { rollNo: 102, name: "Neha", dept: "ECE", marks: 78, city: "Mumbai" },
+...   { rollNo: 103, name: "Raj", dept: "ISE", marks: 92, city: "Bangalore" },
+...   { rollNo: 104, name: "Priya", dept: "CSE", marks: 67, city: "Chennai" },
+...   { rollNo: 105, name: "Karan", dept: "ECE", marks: 35, city: "Hyderabad" }
+... ])
+...
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6992c646140206cd881e2621'),
+    '1': ObjectId('6992c646140206cd881e2622'),
+    '2': ObjectId('6992c646140206cd881e2623'),
+    '3': ObjectId('6992c646140206cd881e2624'),
+    '4': ObjectId('6992c646140206cd881e2625')
+  }
+}
+students> db.students.updateOne({ rollNo: 101}, {$set:{marks:90}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+students> db.students.deleteOne({ rollNo: 105 })
+{ acknowledged: true, deletedCount: 1 }
+students> db.students.find()
+[
+  {
+    _id: ObjectId('6992c646140206cd881e2621'),
+    rollNo: 101,
+    name: 'Amit',
+    dept: 'CSE',
+    marks: 90,
+    city: 'Delhi'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2622'),
+    rollNo: 102,
+    name: 'Neha',
+    dept: 'ECE',
+    marks: 78,
+    city: 'Mumbai'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2623'),
+    rollNo: 103,
+    name: 'Raj',
+    dept: 'ISE',
+    marks: 92,
+    city: 'Bangalore'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2624'),
+    rollNo: 104,
+    name: 'Priya',
+    dept: 'CSE',
+    marks: 67,
+    city: 'Chennai'
+  }
+]
+students> db.students.deleteMany({ marks: { $lt: 40 } })
+{ acknowledged: true, deletedCount: 0 }
+students> db.students.find({
+...   dept: { $in: ["CSE", "ECE"] }
+... })
+...
+[
+  {
+    _id: ObjectId('6992c646140206cd881e2621'),
+    rollNo: 101,
+    name: 'Amit',
+    dept: 'CSE',
+    marks: 90,
+    city: 'Delhi'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2622'),
+    rollNo: 102,
+    name: 'Neha',
+    dept: 'ECE',
+    marks: 78,
+    city: 'Mumbai'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2624'),
+    rollNo: 104,
+    name: 'Priya',
+    dept: 'CSE',
+    marks: 67,
+    city: 'Chennai'
+  }
+]
+students> db.students.find(
+...   { marks: { $gte: 60, $lte: 90 } },
+...   { _id: 0, name: 1, marks: 1 }
+... )
+...
+[
+  { name: 'Amit', marks: 90 },
+  { name: 'Neha', marks: 78 },
+  { name: 'Priya', marks: 67 }
+]
+students> db.students.insertOne({
+...   rollNo: 106,
+...   name: "Sara",
+...   dept: "ISE",
+...   marks: 74,
+...   city: null
+... })
+...
+{
+  acknowledged: true,
+  insertedId: ObjectId('6992c772140206cd881e2626')
+}
+students> db.students.find({ city: null })
+[
+  {
+    _id: ObjectId('6992c772140206cd881e2626'),
+    rollNo: 106,
+    name: 'Sara',
+    dept: 'ISE',
+    marks: 74,
+    city: null
+  }
+]
+students> db.students.find({ city: { $exists: false } })
+
+students> db.students.updateMany(
+...   { city: null },
+...   { $set: { city: "Unknown" } }
+... )
+...
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+students> db.students.countDocuments()
+5
+students> db.students.countDocuments({ dept: "ISE" })
+2
+students> db.students.countDocuments({ marks: { $gt: 75 } })
+3
+students> db.students.find().sort({ marks: -1 })
+[
+  {
+    _id: ObjectId('6992c646140206cd881e2623'),
+    rollNo: 103,
+    name: 'Raj',
+    dept: 'ISE',
+    marks: 92,
+    city: 'Bangalore'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2621'),
+    rollNo: 101,
+    name: 'Amit',
+    dept: 'CSE',
+    marks: 90,
+    city: 'Delhi'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2622'),
+    rollNo: 102,
+    name: 'Neha',
+    dept: 'ECE',
+    marks: 78,
+    city: 'Mumbai'
+  },
+  {
+    _id: ObjectId('6992c772140206cd881e2626'),
+    rollNo: 106,
+    name: 'Sara',
+    dept: 'ISE',
+    marks: 74,
+    city: 'Unknown'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2624'),
+    rollNo: 104,
+    name: 'Priya',
+    dept: 'CSE',
+    marks: 67,
+    city: 'Chennai'
+  }
+]
+students> db.students.find().sort({ marks: -1 }).limit(3)
+[
+  {
+    _id: ObjectId('6992c646140206cd881e2623'),
+    rollNo: 103,
+    name: 'Raj',
+    dept: 'ISE',
+    marks: 92,
+    city: 'Bangalore'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2621'),
+    rollNo: 101,
+    name: 'Amit',
+    dept: 'CSE',
+    marks: 90,
+    city: 'Delhi'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2622'),
+    rollNo: 102,
+    name: 'Neha',
+    dept: 'ECE',
+    marks: 78,
+    city: 'Mumbai'
+  }
+]
+students> db.students.find().skip(2).limit(3)
+[
+  {
+    _id: ObjectId('6992c646140206cd881e2623'),
+    rollNo: 103,
+    name: 'Raj',
+    dept: 'ISE',
+    marks: 92,
+    city: 'Bangalore'
+  },
+  {
+    _id: ObjectId('6992c646140206cd881e2624'),
+    rollNo: 104,
+    name: 'Priya',
+    dept: 'CSE',
+    marks: 67,
+    city: 'Chennai'
+  },
+  {
+    _id: ObjectId('6992c772140206cd881e2626'),
+    rollNo: 106,
+    name: 'Sara',
+    dept: 'ISE',
+    marks: 74,
+    city: 'Unknown'
+  }
+]
+students> db.students.aggregate([
+...   { $group: { _id: null, averageMarks: { $avg: "$marks" } } }
+... ])
+...
+[ { _id: null, averageMarks: 80.2 } ]
+students> db.students.aggregate([
+...   { $group: { _id: "$dept", totalMarks: { $sum: "$marks" } } }
+... ])
+...
+[
+  { _id: 'ECE', totalMarks: 78 },
+  { _id: 'CSE', totalMarks: 157 },
+  { _id: 'ISE', totalMarks: 166 }
+]
+students> db.students.aggregate([
+...   { $group: { _id: "$dept", maxMarks: { $max: "$marks" } } }
+... ])
+...
+[
+  { _id: 'ECE', maxMarks: 78 },
+  { _id: 'CSE', maxMarks: 90 },
+  { _id: 'ISE', maxMarks: 92 }
